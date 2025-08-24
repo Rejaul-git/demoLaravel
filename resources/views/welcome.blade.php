@@ -10,7 +10,7 @@
 
     <h3 style="text-align:center; margin-bottom:20px; color:#343a40;">Contact Form</h3>
 
-    {!! Form::open(['url' => route('register.submit'), 'method' => 'POST']) !!}
+    {!! Form::open(['url' => route('registers'), 'method' => 'POST', 'enctype' => 'multipart/form-data', 'class' => 'form']) !!}
 
     <div class="mb-3">
         {!! Form::label('name', 'Name', ['class' => 'form-label']) !!}
@@ -21,11 +21,23 @@
         {!! Form::label('email', 'Email', ['class' => 'form-label']) !!}
         {!! Form::email('email', null, ['class' => 'form-control', 'placeholder' => 'Enter your email']) !!}
     </div>
+    <!-- phone_no -->
+    <div class="mb-3">
+        {!! Form::label('phone_no', 'Phone Number', ['class' => 'form-label']) !!}
+        {!! Form::text('phone_no', null, ['class' => 'form-control', 'placeholder' => 'Enter your phone number']) !!}
+    </div>
+    <!-- image -->
+    <div class="mb-3">
+        {!! Form::label('photograph', 'Profile Image', ['class' => 'form-label']) !!}
+        {!! Form::file('photograph', ['class' => 'form-control']) !!}
+    </div>
+
     <!-- password -->
     <div class="mb-3">
         {!! Form::label('password', 'Password', ['class' => 'form-label']) !!}
         {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Enter your password']) !!}
     </div>
+
 
     {!! Form::submit('Save', ['class' => 'btn btn-primary w-100', 'style' => 'padding:10px; font-size:16px;']) !!}
 

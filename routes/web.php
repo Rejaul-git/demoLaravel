@@ -27,5 +27,5 @@ Route::get("/contact", function () {
     return view("Contact");
 })->name("contact");
 
-Route::get('/register', [RegisterController::class, 'showForm'])->name('register.form');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+Route::get('/register', [RegisterController::class, 'create'])->name('home');
+Route::post('/registers', [RegisterController::class, 'store'])->name('registers');
