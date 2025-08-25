@@ -9,33 +9,17 @@ use Illuminate\Support\Facades\File;
 
 class RegisterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        $User = User::latest()->paginate(5);
-        return view('welcome');
+        $users = User::all();
+        return view('usershow', compact('users'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('welcome');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         // validation
@@ -68,79 +52,57 @@ class RegisterController extends Controller
         return redirect()->route('home')->with('success', 'User created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit(User $user)
     {
-        return view('edit', compact('user'));
+        return view('useredit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, User $user)
     {
-        // validation
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'phone_no' => ['required', 'string', 'max:255'],
-            'photograph' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+        // Validation
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email,' . $user->id, // unique but ignore current user
+            'phone'      => 'nullable|string|max:20',
+            'photograph' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // upload image
-        $uploadPath = public_path('uploads');
-        if (!File::exists($uploadPath)) {
-            File::makeDirectory($uploadPath, 0755, true, true);
-        }
+        // ডাটা আপডেট
+        $user->name  = $request->name;
+        $user->email = $request->email;
+        $user->phone_no = $request->phone;
+
+        // যদি নতুন image থাকে
         if ($request->hasFile('photograph')) {
-            // delete old image
-            if ($user->photograph && File::exists(public_path($user->photograph))) {
-                File::delete(public_path($user->photograph));
+            // পুরানো ছবি ডিলিট (optional)
+            if ($user->photograph && file_exists(public_path($user->photograph))) {
+                unlink(public_path($user->photograph));
             }
-            $file = $request->file('photograph');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $data['photograph'] = 'uploads/' . $filename;
+
+            // নতুন ছবি upload
+            $file     = $request->file('photograph');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+
+            $user->photograph = 'uploads/' . $filename;
         }
 
-        // update password only if provided
-        if (empty($data['password'])) {
-            unset($data['password']);
-        }
+        $user->save();
 
-        // update user
-        $user->update($data);
-
-        return redirect()->route('home')->with('success', 'User updated successfully.');
+        return redirect()->route('users.edit', $user->id)
+            ->with('success', 'User updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function destroy(User $user)
     {
         // delete image

@@ -29,3 +29,7 @@ Route::get("/contact", function () {
 
 Route::get('/register', [RegisterController::class, 'create'])->name('home');
 Route::post('/registers', [RegisterController::class, 'store'])->name('registers');
+Route::get('/users', [RegisterController::class, 'index'])->name('users');
+//edit users
+Route::get('/users/{user}/edit', [RegisterController::class, 'edit'])->name('users.edit');
+Route::put('/users/{user}', [RegisterController::class, 'update'])->name('users.update');
