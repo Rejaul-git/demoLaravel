@@ -33,3 +33,5 @@ Route::get('/users', [RegisterController::class, 'index'])->name('users');
 //edit users
 Route::get('/users/{user}/edit', [RegisterController::class, 'edit'])->name('users.edit');
 Route::put('/users/{user}', [RegisterController::class, 'update'])->name('users.update');
+Route::get('/users/{user}/delete', [RegisterController::class, 'destroy'])->name('users.destroy');
+

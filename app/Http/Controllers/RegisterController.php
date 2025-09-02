@@ -113,6 +113,6 @@ class RegisterController extends Controller
         // delete user
         $user->delete();
 
-        return redirect()->route('home')->with('success', 'User deleted successfully.');
+        return redirect()->route('users')->with('success', 'User deleted successfully.');
     }
 }
